@@ -1,4 +1,6 @@
 from csp import *
+import time
+
 
 def get_variables_dict(variables_str):
     variables = {}
@@ -73,39 +75,61 @@ def get_constraints_dict(constraints_list):
         #assign the values
         if (x,y) in constraints_dict:
             print ("More than one constraints for the same variables. Only the last one will remain.")
+        if (y,x) in constraints_dict:
+            print ("More than one constraints for the same variables. Only the last one will remain.")
 
         constraints_dict[(x,y)] = (comp, k)
+        constraints_dict[(y,x)] = (comp, k)
 
     return constraints_dict
 
-def constraints_function(A, a, B, b, constraints_dict):
-    comp, k = constraints_dict[(A,B)]
-    if comp == '>':
-        return abs(a - b) > k
-    elif comp == '=':
-        return abs(a - b) == k
-    else:
-        raise ValueError("Wrong compare operator")
+
+
+class RLFA(CSP):
+
+    def constraints(self, A, a, B, b):
+        # print(A, a , B, b)
+        comp, k = self.constraints_dict[(A, B)]
+
+        if comp == '>':
+            return abs(a - b) > k
+        elif comp == '=':
+            return abs(a - b) == k
+        else:
+            raise ValueError("Wrong compare operator")
+
+
+    def __init__(self, instance):
+        domains_file = open("rlfap/dom" + instance + ".txt", "r")
+        variables_file = open("rlfap/var" + instance + ".txt", "r")
+        constraints_file = open("rlfap/ctr" + instance + ".txt", "r")
+
+        domains_dict = get_domains_dict(domains_file.read())
+        variables_dict = get_variables_dict(variables_file.read())
+        constraints_list = get_constraint_list(constraints_file.read())
+
+        variables_list = list(variables_dict.keys())
+        variables_domain_dict = assign_domains_to_variables(variables_dict, domains_dict)
+
+        neighbors_dict = get_neighbors_dict(constraints_list)
+
+        self.constraints_dict = get_constraints_dict(constraints_list)
+
+        # self.conflicts = 0
+
+        self.variables = variables_list
+        self.domains = variables_domain_dict
+        self.neighbors = neighbors_dict
+
+        CSP.__init__(self, self.variables, self.domains, self.neighbors, self.constraints)
+
+
+
 
 instance = "11"
-domains_file = open("rlfap/dom" + instance + ".txt", "r")
-variables_file = open("rlfap/var" + instance + ".txt", "r")
-constraints_file = open("rlfap/ctr" + instance + ".txt", "r")
-
-domains_dict = get_domains_dict(domains_file.read())
-variables_dict = get_variables_dict(variables_file.read())
-constraints_list = get_constraint_list(constraints_file.read())
-
-variables_list = list(variables_dict.keys())
-variables_domain_dict = assign_domains_to_variables(variables_dict, domains_dict)
-
-neighbors_dict = get_neighbors_dict(constraints_list)
-
-constraints_dict = get_constraints_dict(constraints_list)
-# print(constraints_dict)
-
-# constraints_function(260, 200, 261, 439, constraints_dict)
-
-
+k = RLFA(instance)
+start_time = time.time()
+backtracking_search(k, select_unassigned_variable=mrv, inference=mac)
+print("Instance: " + instance + " | MRV + MAC Time = " + str((time.time() - start_time)) + " | Assigns = " + str(k.nassigns))
 
 
