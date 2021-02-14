@@ -1,7 +1,6 @@
 from csp import *
 import time
 
-
 def get_variables_dict(variables_str):
     variables = {}
     variables_list = variables_str.splitlines()
@@ -91,6 +90,8 @@ class RLFA(CSP):
         # print(A, a , B, b)
         comp, k = self.constraints_dict[(A, B)]
 
+        self.constraints_check_no+=1
+
         if comp == '>':
             return abs(a - b) > k
         elif comp == '=':
@@ -112,24 +113,14 @@ class RLFA(CSP):
         variables_domain_dict = assign_domains_to_variables(variables_dict, domains_dict)
 
         neighbors_dict = get_neighbors_dict(constraints_list)
-
         self.constraints_dict = get_constraints_dict(constraints_list)
+        self.constraints_check_no = 0
 
-        # self.conflicts = 0
-
-        self.variables = variables_list
-        self.domains = variables_domain_dict
-        self.neighbors = neighbors_dict
-
-        CSP.__init__(self, self.variables, self.domains, self.neighbors, self.constraints)
+        CSP.__init__(self, variables_list, variables_domain_dict, neighbors_dict, self.constraints)
 
 
-
-
-instance = "11"
+instance = "2-f24"
 k = RLFA(instance)
 start_time = time.time()
 backtracking_search(k, select_unassigned_variable=mrv, inference=mac)
-print("Instance: " + instance + " | MRV + MAC Time = " + str((time.time() - start_time)) + " | Assigns = " + str(k.nassigns))
-
-
+print("Instance: " + instance + " | MRV + MAC Time: " + str(round(time.time() - start_time, 2)) + " sec. | Assigns number: " + str(k.nassigns) + " | Number of constraint checks: " + str(k.constraints_check_no))
