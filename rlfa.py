@@ -1,6 +1,8 @@
 from csp import *
 import time
+
 from collections import OrderedDict
+
 
 
 # constraints_dict = {}
@@ -220,7 +222,8 @@ def nconflicts(self, var, val, assignment, var_conflict_set):
     def conflict(var2):
         conflicted = var2 in assignment and not self.constraints(var, val, var2, assignment[var2])
         if conflicted:
-            var_conflict_set[var2] = True
+            # print("CONFLICTEDDDDDDD var2 = " + str(var2))
+            var_conflict_set.add(var2)
         return conflicted
         # return var2 in assignment and not self.constraints(var, val, var2, assignment[var2])
 
@@ -235,8 +238,8 @@ def forward_checking(csp, var, value, assignment, removals, var_conflict_set):
                 if not csp.constraints(var, value, B, b):
                     csp.prune(B, b, removals)
             if not csp.curr_domains[B]:
-                print('MPHKA')
-                var_conflict_set[B] = True #add the conflicted variable in the current var conflict set
+                # var_conflict_set[B] = True #add the conflicted variable in the current var conflict set
+                print('THA EPISTREPSW FALSE')
                 return False
     return True
 
@@ -268,43 +271,62 @@ def backtracking_search(csp, select_unassigned_variable=first_unassigned_variabl
 def conflict_directed_backjumping(csp, select_unassigned_variable=first_unassigned_variable,
                         order_domain_values=unordered_domain_values):
     conflict_set = {}
-    def CBJ(assignment):
+    assignment = OrderedDict()
+    def CBJ():
         if len(assignment) == len(csp.variables):
             return assignment
 
         var = select_unassigned_variable(assignment, csp)
+        print ("var = " + str(var))
 
-        if var not in conflict_set:
-            conflict_set[var] = OrderedDict()
-        else:
-            print('WTFFFFFFFFFFFFFFFFFFFFF')
+        # if var not in conflict_set:
+        conflict_set[var] = set()
+
         for value in order_domain_values(var, assignment, csp):
             if 0 == nconflicts(csp, var, value, assignment, conflict_set[var]):
                 csp.assign(var, value, assignment)
                 removals = csp.suppose(var, value)
-                if forward_checking(csp, var, value, assignment, removals, conflict_set[var]):
-                    result = CBJ(assignment)
-                    if result!=var:
-                        return result
+                # if forward_checking(csp, var, value, assignment, removals, conflict_set[var]):
+                result = CBJ()
+                print('eimai prin to return result = ' + str(result) + ' var = ' + str(var))
+                if result!=var and result is not None:
+                    return result
                 csp.restore(removals)
+            print("conflict dict of " + str(var) + " = " + str(conflict_set[var]))
+
         csp.unassign(var, assignment)
 
+
         if conflict_set[var]:
-            print(conflict_set[var])
-            h = next(reversed(conflict_set[var])) #h is the last element of the ordered conflict set
-            del conflict_set[var][h]
+            # print(conflict_set[var])
+            # h = next(reversed(conflict_set[var]))
 
-            if h not in conflict_set:
-                conflict_set[h] = OrderedDict()
-            for x in conflict_set[var]:
-                conflict_set[h][x] = True #merge(conf_set[h], conf_set[current])
-                del conflict_set[var][x]
+            print(assignment)
 
-            return h
+            for k, v in ((k, assignment[k]) for k in reversed(assignment)):
+                print (k,v)
+                if k in conflict_set[var]:
+                    h = k
+                    conflict_set[var].remove(h)
+                    for x in conflict_set[var]:
+                        conflict_set[h].add(x) # merge(conf_set[h], conf_set[current])
+                    del conflict_set[var]
+                    print('EPISTREFW H ' + str(h))
+                    return h
+
+
+            # if h not in conflict_set:
+            #     print()
+            #     conflict_set[h] = OrderedDict()
+
+        # else:
+            # print('EPISTREFW NONEEEEEEEEEEEEEEE')
+        # print('EPISTREFW NONEEEEEEEEEEEEEEE')
         return None
 
 
-    result = CBJ({})
+    result = CBJ()
+    print('EIMAI PRIN TO RESULT result = ' + str(result))
     assert result is None or csp.goal_test(result)
     return result
 
@@ -344,7 +366,10 @@ def revise(csp, Xi, Xj, removals, checks=0):
     return revised, checks
 
 
-instance = "11"
+instance = "2-f24"
+# instance = "11"
+# instance = "3-f10"
+
 k = RLFA(instance)
 constraints_dict = k.get_constraints_dict(k.constraints_list)
 
@@ -353,14 +378,28 @@ start_time = time.time()
 # result = backtracking_search(k, select_unassigned_variable=domwdeg_dynamic_variable, inference=mac)
 
 result = conflict_directed_backjumping(k, select_unassigned_variable=domwdeg_dynamic_variable)
+print (result)
 
+# myset = set()
+# myset.add(100)
+# myset.add(-100)
+# myset.add(-200)
+# myset.add(100000)
+
+# for x in myset:
+#     print (x)
+# print(str(next(reversed(myset))))
 
 # myset = OrderedDict()
 # myset[100] = "1"
 # myset[-100] = "2"
 # myset[-200] = "3"
 # myset[100000] = "4"
-# print(str(next(reversed(myset))))
+
+# for k, v in ((k, myset[k]) for k in reversed(myset)):
+#     print(k)
+#     print(v)
+
 
 # print(myset)
 
