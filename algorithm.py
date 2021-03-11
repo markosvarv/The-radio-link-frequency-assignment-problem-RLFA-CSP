@@ -72,28 +72,13 @@ def mac(csp, var, value, assignment, removals, constraint_propagation=AC3):
     return constraint_propagation(csp, {(X, var) for X in csp.neighbors[var]}, removals)
 
 
-def conflict(self, var, val, assignment, var_conflict_set,var2):
-    print('MPHKA STO CONFLICT')
-    conflicted = var2 in assignment and not self.constraints(var, val, var2, assignment[var2])
-    if conflicted:
-        print("CONFLICTEDDDDDDD var2 = " + str(var2))
-        var_conflict_set[var].add(var2)
-    return conflicted
-
-
-def forward_checking(csp, var, value, assignment, removals, var_conflict_set):
-    """Prune neighbor values inconsistent with var=value."""
-    csp.support_pruning()
-    for B in csp.neighbors[var]:
-        if B not in assignment:
-            for b in csp.curr_domains[B][:]:
-                if not csp.constraints(var, value, B, b):
-                    csp.prune(B, b, removals)
-            if not csp.curr_domains[B]:
-                var_conflict_set.add(B) #add the conflicted variable in the current var conflict set
-                # print('THA EPISTREPSW FALSE')
-                return False
-    return True
+# def conflict(self, var, val, assignment, var_conflict_set,var2):
+#     print('MPHKA STO CONFLICT')
+#     conflicted = var2 in assignment and not self.constraints(var, val, var2, assignment[var2])
+#     if conflicted:
+#         print("CONFLICTEDDDDDDD var2 = " + str(var2))
+#         var_conflict_set[var].add(var2)
+#     return conflicted
 
 
 def backtracking_search(csp, select_unassigned_variable=first_unassigned_variable,

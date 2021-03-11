@@ -15,16 +15,17 @@ def conflict_directed_backjumping(csp, select_unassigned_variable=first_unassign
         conflict_set[var] = set()
 
         for value in order_domain_values(var, assignment, csp):
-            if 0 == check_constraints_all_values(csp, var, assignment, conflict_set[var], value):
+            if 0 == cbj_nconflicts(csp, var, assignment, conflict_set[var], value):
                 csp.assign(var, value, assignment)
                 removals = csp.suppose(var, value)
-                result = CBJ()
+                if forward_checking_cbj(csp, var, value, assignment, removals, conflict_set[var]):
+                    result = CBJ()
 
-                if result != var:
-                    csp.restore(removals)
-                    if type(result) == type(var):
-                        csp.unassign(var, assignment)
-                    return result
+                    if result != var:
+                        csp.restore(removals)
+                        if type(result) == type(var):
+                            csp.unassign(var, assignment)
+                        return result
                 csp.restore(removals)
         csp.unassign(var, assignment)
 
@@ -44,7 +45,7 @@ def conflict_directed_backjumping(csp, select_unassigned_variable=first_unassign
     return result
 
 
-def check_constraints_all_values(self, var, assignment, var_conflict_set, val):
+def cbj_nconflicts(self, var, assignment, var_conflict_set, val):
     newest_neighbors = collections.OrderedDict()
 
     # first add all the newest neighbors
@@ -64,3 +65,18 @@ def check_constraints_all_values(self, var, assignment, var_conflict_set, val):
             var_conflict_set.add(neighbor)
 
     return conflict_num
+
+
+def forward_checking_cbj(csp, var, value, assignment, removals, var_conflict_set):
+    """Prune neighbor values inconsistent with var=value."""
+    csp.support_pruning()
+    for B in csp.neighbors[var]:
+        if B not in assignment:
+            for b in csp.curr_domains[B][:]:
+                if not csp.constraints(var, value, B, b):
+                    csp.prune(B, b, removals)
+            if not csp.curr_domains[B]:
+                var_conflict_set.add(B)  # add the conflicted variable in the current var conflict set
+                # print('THA EPISTREPSW FALSE')
+                return False
+    return True

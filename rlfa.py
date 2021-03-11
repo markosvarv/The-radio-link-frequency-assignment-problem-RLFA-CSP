@@ -159,7 +159,7 @@ start_time = time.time()
 # result = backtracking_search(k, select_unassigned_variable=domwdeg_dynamic_variable, inference=mac)
 # result = backtracking_search(k, select_unassigned_variable=domwdeg_dynamic_variable)
 
-result = conflict_directed_backjumping(k, select_unassigned_variable=domwdeg_dynamic_variable)
+# result = conflict_directed_backjumping(k, select_unassigned_variable=domwdeg_dynamic_variable)
 # result = conflict_directed_backjumping(k)
 
 # result = min_conflicts(k, 500000)
@@ -180,7 +180,7 @@ australia_csp = MapColoringCSP(list('RBG'), """SA: WA NT Q NSW V; NT: WA Q; NSW:
 
 
 
-# print(conflict_directed_backjumping(australia_csp))
+print(conflict_directed_backjumping(australia_csp))
 
 
 # for x in range(10):
