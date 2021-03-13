@@ -1,6 +1,6 @@
 import collections
 
-from csp import *
+# from csp import *
 import time
 from algorithm import *
 from fc_cbj import *
@@ -147,40 +147,46 @@ class RLFA(CSP):
         CSP.__init__(self, variables_list, variables_domain_dict, neighbors_dict, constraints)
 
 
-instance = "2-f24"
+# instance = "2-f24"
 # instance = "11"
-# instance = "3-f10"
+instance = "3-f10"
 
 k = RLFA(instance)
 constraints_dict = k.get_constraints_dict(k.constraints_list)
 
 start_time = time.time()
 # result = backtracking_search(k, select_unassigned_variable=mrv, inference=mac)
-# result = backtracking_search(k, select_unassigned_variable=domwdeg_dynamic_variable, inference=mac)
+
+# result = backtracking_search(k, select_unassigned_variable=domwdeg_dynamic_variable, inference=my_mac)
+# result = backtracking_search(k, inference=mac)
+
 # result = backtracking_search(k, select_unassigned_variable=domwdeg_dynamic_variable)
 
-# result = conflict_directed_backjumping(k, select_unassigned_variable=domwdeg_dynamic_variable)
+result = conflict_directed_backjumping(k, select_unassigned_variable=domwdeg_dynamic_variable)
+print(result)
+
 # result = conflict_directed_backjumping(k)
 
 # result = min_conflicts(k, 500000)
 
-australia_csp = MapColoringCSP(list('RBG'), """SA: WA NT Q NSW V; NT: WA Q; NSW: Q V; T: """)
 
-# usa_csp = MapColoringCSP(list('RGB'),
-#                          """WA: OR ID; OR: ID NV CA; CA: NV AZ; NV: ID UT AZ; ID: MT WY UT;
-#                          UT: WY CO AZ; MT: ND SD WY; WY: SD NE CO; CO: NE KA OK NM; NM: OK TX AZ;
-#                          ND: MN SD; SD: MN IA NE; NE: IA MO KA; KA: MO OK; OK: MO AR TX;
-#                          TX: AR LA; MN: WI IA; IA: WI IL MO; MO: IL KY TN AR; AR: MS TN LA;
-#                          LA: MS; WI: MI IL; IL: IN KY; IN: OH KY; MS: TN AL; AL: TN GA FL;
-#                          MI: OH IN; OH: PA WV KY; KY: WV VA TN; TN: VA NC GA; GA: NC SC FL;
-#                          PA: NY NJ DE MD WV; WV: MD VA; VA: MD DC NC; NC: SC; NY: VT MA CT NJ;
-#                          NJ: DE; DE: MD; MD: DC; VT: NH MA; MA: NH RI CT; CT: RI; ME: NH;
-#                          HI: ; AK: """)
-# result = conflict_directed_backjumping(usa_csp)
+# australia_csp = MapColoringCSP(list('RBG'), """SA: WA NT Q NSW V; NT: WA Q; NSW: Q V; T: """)
+# result = my_backtracking_search(australia_csp, inference=forward_checking)
+
+usa_csp = MapColoringCSP(list('RGBY'),
+                         """WA: OR ID; OR: ID NV CA; CA: NV AZ; NV: ID UT AZ; ID: MT WY UT;
+                         UT: WY CO AZ; MT: ND SD WY; WY: SD NE CO; CO: NE KA OK NM; NM: OK TX AZ;
+                         ND: MN SD; SD: MN IA NE; NE: IA MO KA; KA: MO OK; OK: MO AR TX;
+                         TX: AR LA; MN: WI IA; IA: WI IL MO; MO: IL KY TN AR; AR: MS TN LA;
+                         LA: MS; WI: MI IL; IL: IN KY; IN: OH KY; MS: TN AL; AL: TN GA FL;
+                         MI: OH IN; OH: PA WV KY; KY: WV VA TN; TN: VA NC GA; GA: NC SC FL;
+                         PA: NY NJ DE MD WV; WV: MD VA; VA: MD DC NC; NC: SC; NY: VT MA CT NJ;
+                         NJ: DE; DE: MD; MD: DC; VT: NH MA; MA: NH RI CT; CT: RI; ME: NH;
+                         HI: ; AK: """)
 
 
-
-print(conflict_directed_backjumping(australia_csp))
+# print(conflict_directed_backjumping(usa_csp))
+# print(conflict_directed_backjumping(australia_csp))
 
 
 # for x in range(10):

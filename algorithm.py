@@ -2,7 +2,7 @@
 from csp import *
 
 
-def AC3(csp, queue=None, removals=None, arc_heuristic=dom_j_up):
+def my_AC3(csp, queue=None, removals=None, arc_heuristic=dom_j_up):
     """[Figure 6.3]"""
     if queue is None:
         queue = {(Xi, Xk) for Xi in csp.variables for Xk in csp.neighbors[Xi]}
@@ -11,7 +11,7 @@ def AC3(csp, queue=None, removals=None, arc_heuristic=dom_j_up):
     checks = 0
     while queue:
         (Xi, Xj) = queue.pop()
-        revised, checks = revise(csp, Xi, Xj, removals, checks)
+        revised, checks = my_revise(csp, Xi, Xj, removals, checks)
         if revised:
             if not csp.curr_domains[Xi]:
                 return False, checks  # CSP is inconsistent
@@ -67,7 +67,7 @@ def domwdeg_dynamic_variable(assignment, csp):
         return first([var for var in csp.variables if var not in assignment])
 
 
-def mac(csp, var, value, assignment, removals, constraint_propagation=AC3):
+def my_mac(csp, var, value, assignment, removals, constraint_propagation=my_AC3):
     """Maintain arc consistency."""
     return constraint_propagation(csp, {(X, var) for X in csp.neighbors[var]}, removals)
 
@@ -81,33 +81,44 @@ def mac(csp, var, value, assignment, removals, constraint_propagation=AC3):
 #     return conflicted
 
 
-def backtracking_search(csp, select_unassigned_variable=first_unassigned_variable,
+def my_backtracking_search(csp, select_unassigned_variable=first_unassigned_variable,
                         order_domain_values=unordered_domain_values, inference=no_inference):
     """[Figure 6.5]"""
 
-    def backtrack(assignment):
+    def my_backtrack(assignment):
         if len(assignment) == len(csp.variables):
             return assignment
         var = select_unassigned_variable(assignment, csp)
+
+
         for value in order_domain_values(var, assignment, csp):
             if 0 == csp.nconflicts(var, value, assignment):
+                print("kanw assign to " + var)
                 csp.assign(var, value, assignment)
+                print("var = " + var + " val = " + value)
+
                 removals = csp.suppose(var, value)
                 if inference(csp, var, value, assignment, removals):
-                    result = backtrack(assignment)
+                    print("\teimai prin kalesw tin backtrack me var = " + var + " value = " + value)
+                    result = my_backtrack(assignment)
                     if result is not None:
                         return result
+                print("var = " + var + " value = " + value + " kanw restore to " + str(removals))
                 csp.restore(removals)
+        print("kanw unassign to " + var + "\n\n")
         csp.unassign(var, assignment)
         return None
 
-    result = backtrack({})
+    result = my_backtrack({})
     assert result is None or csp.goal_test(result)
     return result
 
 
-def revise(csp, Xi, Xj, removals, checks=0):
+def my_revise(csp, Xi, Xj, removals, checks=0):
     """Return true if we remove a value."""
+
+    # print("mphka sth revise")
+
     revised = False
     for x in csp.curr_domains[Xi][:]:
         # If Xi=x conflicts with Xj=y for every possible y, eliminate Xi=x

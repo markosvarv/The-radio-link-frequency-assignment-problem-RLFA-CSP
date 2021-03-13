@@ -6,6 +6,7 @@ def conflict_directed_backjumping(csp, select_unassigned_variable=first_unassign
                                   order_domain_values=unordered_domain_values):
     conflict_set = {}
     assignment = collections.OrderedDict()
+    checking = {}
 
     def CBJ():
         if len(assignment) == len(csp.variables):
@@ -13,31 +14,49 @@ def conflict_directed_backjumping(csp, select_unassigned_variable=first_unassign
         var = select_unassigned_variable(assignment, csp)
 
         conflict_set[var] = set()
+        checking[var] = set()
+        # print("var = " + str(var))
 
         for value in order_domain_values(var, assignment, csp):
             if 0 == cbj_nconflicts(csp, var, assignment, conflict_set[var], value):
                 csp.assign(var, value, assignment)
                 removals = csp.suppose(var, value)
-                if forward_checking_cbj(csp, var, value, assignment, removals, conflict_set[var]):
+                if forward_checking_cbj(csp, var, value, assignment, removals, checking[var]):
+
+                    # checking[var].add("markos")
+                    # print("checking of " + str(var) + " = " + str(checking[var]))
+
                     result = CBJ()
 
                     if result != var:
                         csp.restore(removals)
+                        checking[var].clear()
                         if type(result) == type(var):
                             csp.unassign(var, assignment)
                         return result
+                # print("checking of " + str(var) + " = " + str(checking[var]))
+
                 csp.restore(removals)
+                checking[var].clear()
+
         csp.unassign(var, assignment)
 
-        if conflict_set[var]:
-            for k, v in ((k, assignment[k]) for k in reversed(assignment)):  # we want the most recent assigned var
-                if k in conflict_set[var]:
-                    h = k
-                    conflict_set[var].remove(k)
-                    for x in conflict_set[var]:
-                        conflict_set[h].add(x)  # merge(conf_set[h], conf_set[current])
-                    del conflict_set[var]
-                    return h
+        for key_var, var_set in checking.items():
+            if var in var_set:
+                conflict_set[var].add(key_var)
+
+        # print("conflict set of " + str(var) + " = " + str(conflict_set[var]))
+
+        # if conflict_set[var]: TODO delete it
+
+        for k, v in ((k, assignment[k]) for k in reversed(assignment)):  # we want the most recent assigned var
+            if k in conflict_set[var]:
+                h = k
+                conflict_set[var].remove(k)
+                for x in conflict_set[var]:
+                    conflict_set[h].add(x)  # merge(conf_set[h], conf_set[current])
+                del conflict_set[var]
+                return h
         return None
 
     result = CBJ()
@@ -67,7 +86,7 @@ def cbj_nconflicts(self, var, assignment, var_conflict_set, val):
     return conflict_num
 
 
-def forward_checking_cbj(csp, var, value, assignment, removals, var_conflict_set):
+def forward_checking_cbj(csp, var, value, assignment, removals, var_checking):
     """Prune neighbor values inconsistent with var=value."""
     csp.support_pruning()
     for B in csp.neighbors[var]:
@@ -75,8 +94,53 @@ def forward_checking_cbj(csp, var, value, assignment, removals, var_conflict_set
             for b in csp.curr_domains[B][:]:
                 if not csp.constraints(var, value, B, b):
                     csp.prune(B, b, removals)
+                    # print("THA VALW TO " + str(B))
+                    var_checking.add(B)
+
             if not csp.curr_domains[B]:
-                var_conflict_set.add(B)  # add the conflicted variable in the current var conflict set
+                # var_conflict_set.add(B)  # add the conflicted variable in the current var conflict set
                 # print('THA EPISTREPSW FALSE')
                 return False
     return True
+
+
+
+# def conflict_directed_backjumping(csp, select_unassigned_variable=first_unassigned_variable,
+#                                   order_domain_values=unordered_domain_values):
+#     conflict_set = {}
+#     assignment = collections.OrderedDict()
+#
+#     def CBJ():
+#         if len(assignment) == len(csp.variables):
+#             return assignment
+#         var = select_unassigned_variable(assignment, csp)
+#
+#         conflict_set[var] = set()
+#
+#         for value in order_domain_values(var, assignment, csp):
+#             if 0 == cbj_nconflicts(csp, var, assignment, conflict_set[var], value):
+#                 csp.assign(var, value, assignment)
+#                 removals = csp.suppose(var, value)
+#                 result = CBJ()
+#
+#                 if result != var:
+#                     csp.restore(removals)
+#                     if type(result) == type(var):
+#                         csp.unassign(var, assignment)
+#                     return result
+#                 csp.restore(removals)
+#         csp.unassign(var, assignment)
+#
+#         for k, v in ((k, assignment[k]) for k in reversed(assignment)):  # we want the most recent assigned var
+#             if k in conflict_set[var]:
+#                 h = k
+#                 conflict_set[var].remove(k)
+#                 for x in conflict_set[var]:
+#                     conflict_set[h].add(x)  # merge(conf_set[h], conf_set[current])
+#                 del conflict_set[var]
+#                 return h
+#         return None
+#
+#     result = CBJ()
+#     assert result is None or csp.goal_test(result)
+#     return result
