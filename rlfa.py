@@ -4,7 +4,7 @@ import collections
 import time
 from algorithm import *
 from fc_cbj import *
-
+import collections
 # constraints_dict = {}
 constraints_check_no = 0
 
@@ -161,7 +161,7 @@ start_time = time.time()
 # result = backtracking_search(k, inference=mac)
 
 # result = backtracking_search(k, select_unassigned_variable=domwdeg_dynamic_variable)
-
+#
 result = conflict_directed_backjumping(k, select_unassigned_variable=domwdeg_dynamic_variable)
 print(result)
 
@@ -173,50 +173,50 @@ print(result)
 # australia_csp = MapColoringCSP(list('RBG'), """SA: WA NT Q NSW V; NT: WA Q; NSW: Q V; T: """)
 # result = my_backtracking_search(australia_csp, inference=forward_checking)
 
-usa_csp = MapColoringCSP(list('RGBY'),
-                         """WA: OR ID; OR: ID NV CA; CA: NV AZ; NV: ID UT AZ; ID: MT WY UT;
-                         UT: WY CO AZ; MT: ND SD WY; WY: SD NE CO; CO: NE KA OK NM; NM: OK TX AZ;
-                         ND: MN SD; SD: MN IA NE; NE: IA MO KA; KA: MO OK; OK: MO AR TX;
-                         TX: AR LA; MN: WI IA; IA: WI IL MO; MO: IL KY TN AR; AR: MS TN LA;
-                         LA: MS; WI: MI IL; IL: IN KY; IN: OH KY; MS: TN AL; AL: TN GA FL;
-                         MI: OH IN; OH: PA WV KY; KY: WV VA TN; TN: VA NC GA; GA: NC SC FL;
-                         PA: NY NJ DE MD WV; WV: MD VA; VA: MD DC NC; NC: SC; NY: VT MA CT NJ;
-                         NJ: DE; DE: MD; MD: DC; VT: NH MA; MA: NH RI CT; CT: RI; ME: NH;
-                         HI: ; AK: """)
-
-
 # print(conflict_directed_backjumping(usa_csp))
-# print(conflict_directed_backjumping(australia_csp))
+print(conflict_directed_backjumping(australia_csp))
 
 
-# for x in range(10):
-#     for y in range(20):
-#         print('\ty = ' + str(y))
-#         if y>10:
-#             break
-#     print('x = ' + str(x))
+# myset = {}
+# myset[100] = True
+# myset[-100] = True
+# myset[-200] = True
+# myset[100000] = True
 
-# myset = set()
-# myset.add(100)
-# myset.add(-100)
-# myset.add(-200)
-# myset.add(100000)
+
 
 # for x in myset:
 #     print (x)
 # print(str(next(reversed(myset))))
-
-# myset = OrderedDict()
+#
+# myset = collections.OrderedDict()
 # myset[100] = "1"
 # myset[-100] = "2"
 # myset[-200] = "3"
 # myset[100000] = "4"
+# myset[150] = "5"
+# #
+# print("my set before: " + str(myset))
 #
-# print(len(myset))
+# myrange = False
+# deleted_set = set()
+# for key, value in myset.items():
+#
+#     if key == 100000:
+#         myrange = True
+#     if myrange:
+#             deleted_set.add(key)
+#     if key == 150:
+#         myrange = False
+#
+#
+# for x in deleted_set:
+#     myset[x]=''
 
-# for k, v in ((k, myset[k]) for k in reversed(myset)):
-#     print(k)
-#     print(v)
+# print("deleted set = " + str(deleted_set))
+# print("my set after: " + str(myset))
+
+
 
 
 # print(myset)

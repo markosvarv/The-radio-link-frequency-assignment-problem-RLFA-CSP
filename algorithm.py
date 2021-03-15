@@ -93,19 +93,19 @@ def my_backtracking_search(csp, select_unassigned_variable=first_unassigned_vari
 
         for value in order_domain_values(var, assignment, csp):
             if 0 == csp.nconflicts(var, value, assignment):
-                print("kanw assign to " + var)
+                # print("kanw assign to " + var)
                 csp.assign(var, value, assignment)
-                print("var = " + var + " val = " + value)
+                # print("var = " + var + " val = " + value)
 
                 removals = csp.suppose(var, value)
                 if inference(csp, var, value, assignment, removals):
-                    print("\teimai prin kalesw tin backtrack me var = " + var + " value = " + value)
+                    # print("\teimai prin kalesw tin backtrack me var = " + var + " value = " + value)
                     result = my_backtrack(assignment)
                     if result is not None:
                         return result
-                print("var = " + var + " value = " + value + " kanw restore to " + str(removals))
+                # print("var = " + var + " value = " + value + " kanw restore to " + str(removals))
                 csp.restore(removals)
-        print("kanw unassign to " + var + "\n\n")
+        # print("kanw unassign to " + var + "\n\n")
         csp.unassign(var, assignment)
         return None
 
