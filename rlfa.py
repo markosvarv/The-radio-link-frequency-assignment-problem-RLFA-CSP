@@ -1,5 +1,5 @@
 import time
-from algorithm import *
+from domwdeg import *
 from fc_cbj import *
 
 
@@ -138,34 +138,37 @@ class RLFA(CSP):
         CSP.__init__(self, variables_list, variables_domain_dict, neighbors_dict, self.constraints)
 
 
-# instance = "2-f24"
+instance = "2-f24"
 # instance = "2-f25"
-instance = "11"
 # instance = "3-f10"
-
 # instance = "3-f11"
+# instance = "11"
 
 k = RLFA(instance)
 constraints_dict = k.get_constraints_dict(k.constraints_list)
-
 start_time = time.time()
-# result = backtracking_search(k, select_unassigned_variable=mrv, inference=mac)
 
-# result = backtracking_search(k, select_unassigned_variable=domwdeg_dynamic_variable, inference=my_mac)
+"""BACKTRACKING"""
+# result = backtracking_search(k)
+# result = backtracking_search(k, inference=forward_checking)
+# result = backtracking_search(k, select_unassigned_variable=domwdeg_dynamic_variable, inference=domwdeg_forward_checking)
 # result = backtracking_search(k, inference=mac)
+# result = backtracking_search(k, select_unassigned_variable=domwdeg_dynamic_variable, inference=domwdeg_mac)
 
-# result = backtracking_search(k, select_unassigned_variable=domwdeg_dynamic_variable)
-#
-result = conflict_directed_backjumping(k, select_unassigned_variable=domwdeg_dynamic_variable, inference=forward_checking_cbj)
-# result = conflict_directed_backjumping(k, inference=forward_checking_cbj)
-
-print(result)
-
+"""CONFLICT DIRECTED BACKJUMPING"""
 # result = conflict_directed_backjumping(k)
+# result = conflict_directed_backjumping(k, select_unassigned_variable=domwdeg_dynamic_variable)
+# result = conflict_directed_backjumping(k, inference=forward_checking_cbj)
+result = conflict_directed_backjumping(k, select_unassigned_variable=domwdeg_dynamic_variable, inference=cbj_forward_checking)
 
+"""MIN CONFLICTS"""
 # result = min_conflicts(k, 500000)
 
-# result = my_backtracking_search(australia_csp, inference=forward_checking)
+"""OTHER PROBLEMS"""
+# result = conflict_directed_backjumping(australia_csp, inference=forward_checking_cbj)
+# result = conflict_directed_backjumping(usa_csp)
 
-print("Instance: " + instance + " | MRV + MAC Time: " + str(round(time.time() - start_time, 2)) + " sec. | Assigns number: " + str(k.nassigns) + " | Number of constraint checks: " + str(k.constraints_check_no))
+print(result)
+print("Instance: " + instance + " | Time: " + str(round(time.time() - start_time, 2)) + " sec. | Assigns number: " + str(k.nassigns) + " | Number of constraint checks: " + "{:,}".format(k.constraints_check_no))
+
 

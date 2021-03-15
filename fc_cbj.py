@@ -2,14 +2,14 @@ import collections
 from csp import *
 
 
-def no_my_inference(csp, var, value, assignment, removals, var_checking):
+def no_cbj_inference(csp, var, value, assignment, removals, var_checking):
     return True
 
 
 def conflict_directed_backjumping(csp, select_unassigned_variable=first_unassigned_variable,
-                                  order_domain_values=unordered_domain_values, inference=no_my_inference):
+                                  order_domain_values=unordered_domain_values, inference=no_cbj_inference):
     conflict_set = {}
-    assignment = collections.OrderedDict()
+    assignment = collections.OrderedDict()  # we use an OrderedDict to ensure that we keep the order of the assigned variables
     checking = {}  # we use a checking dictionary of variable sets in order to find the conflict sets
 
     def CBJ():
@@ -31,7 +31,8 @@ def conflict_directed_backjumping(csp, select_unassigned_variable=first_unassign
                         csp.restore(removals)
                         checking[var].clear()
 
-                        # if the result type does not equal the var type, the result is either None or the assignment dictionary, so there is nothing to unassign
+                        # if the result type does not equal the var type, the result is either None
+                        # or the assignment dictionary,so there is nothing to unassign
                         if type(result) == type(var):
                             csp.unassign(var, assignment)
                         return result
@@ -39,7 +40,7 @@ def conflict_directed_backjumping(csp, select_unassigned_variable=first_unassign
                 checking[var].clear()
         csp.unassign(var, assignment)
 
-        # fill the checking array
+        # fill the conflict set using the checking array
         for key_var, var_set in checking.items():
             if var in var_set:
                 conflict_set[var].add(key_var)
@@ -83,7 +84,7 @@ def cbj_nconflicts(self, var, assignment, var_conflict_set, val):
     return conflict_num
 
 
-def forward_checking_cbj(csp, var, value, assignment, removals, var_checking):
+def cbj_forward_checking(csp, var, value, assignment, removals, var_checking):
     """Prune neighbor values inconsistent with var=value."""
     csp.support_pruning()
     for B in csp.neighbors[var]:
@@ -94,6 +95,10 @@ def forward_checking_cbj(csp, var, value, assignment, removals, var_checking):
                     var_checking.add(B)
 
             if not csp.curr_domains[B]:
-                csp.increase_constraint_weight(var, B)  # increase weight for the domwdeg
+                try:
+                    csp.increase_constraint_weight(var, B)  # increase weight for the domwdeg
+                except AttributeError:
+                    pass  # the algorithm domwdeg isn't implemented for this csp
+
                 return False
     return True
