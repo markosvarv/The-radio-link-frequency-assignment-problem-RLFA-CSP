@@ -1,25 +1,6 @@
-import collections
-
-# from csp import *
 import time
 from algorithm import *
 from fc_cbj import *
-import collections
-# constraints_dict = {}
-constraints_check_no = 0
-
-
-def constraints(A, a, B, b):
-    comp, k, weight = constraints_dict[(A, B)]
-
-    # constraints_check_no += 1
-
-    if comp == '>':
-        return abs(a - b) > k
-    elif comp == '=':
-        return abs(a - b) == k
-    else:
-        raise ValueError("Wrong compare operator")
 
 
 class RLFA(CSP):
@@ -113,21 +94,31 @@ class RLFA(CSP):
 
         return constraints_dict
 
-    def increase_constraint_weight (self, A, B):
-        comp, k, weight = constraints_dict[(A,B)]
-        # print("weight = " + str(weight))
-        constraints_dict[(A,B)] = (comp, k , weight+1)
-        constraints_dict[(B,A)] = (comp, k , weight+1)
+    @staticmethod
+    def increase_constraint_weight(A, B):
+        comp, k, weight = constraints_dict[(A, B)]
+        constraints_dict[(A, B)] = (comp, k, weight+1)
+        constraints_dict[(B, A)] = (comp, k, weight+1)
 
-
-    def get_constraint_weight (self, A, B):
-        comp, k, weight = constraints_dict[(A,B)]
-        # print("weight = " + str(weight))
+    @staticmethod
+    def get_constraint_weight(A, B):
+        comp, k, weight = constraints_dict[(A, B)]
         return weight
 
     def get_list(self):
         return self.constraints_list
 
+    def constraints(self, A, a, B, b):
+        comp, k, weight = constraints_dict[(A, B)]
+
+        self.constraints_check_no += 1
+
+        if comp == '>':
+            return abs(a - b) > k
+        elif comp == '=':
+            return abs(a - b) == k
+        else:
+            raise ValueError("Wrong compare operator")
 
     def __init__(self, instance):
         domains_file = open("rlfap/dom" + instance + ".txt", "r")
@@ -144,12 +135,15 @@ class RLFA(CSP):
         neighbors_dict = self.get_neighbors_dict(self.constraints_list)
         self.constraints_check_no = 0
 
-        CSP.__init__(self, variables_list, variables_domain_dict, neighbors_dict, constraints)
+        CSP.__init__(self, variables_list, variables_domain_dict, neighbors_dict, self.constraints)
 
 
 # instance = "2-f24"
-# instance = "11"
-instance = "3-f10"
+# instance = "2-f25"
+instance = "11"
+# instance = "3-f10"
+
+# instance = "3-f11"
 
 k = RLFA(instance)
 constraints_dict = k.get_constraints_dict(k.constraints_list)
@@ -162,64 +156,16 @@ start_time = time.time()
 
 # result = backtracking_search(k, select_unassigned_variable=domwdeg_dynamic_variable)
 #
-result = conflict_directed_backjumping(k, select_unassigned_variable=domwdeg_dynamic_variable)
+result = conflict_directed_backjumping(k, select_unassigned_variable=domwdeg_dynamic_variable, inference=forward_checking_cbj)
+# result = conflict_directed_backjumping(k, inference=forward_checking_cbj)
+
 print(result)
 
 # result = conflict_directed_backjumping(k)
 
 # result = min_conflicts(k, 500000)
 
-
-# australia_csp = MapColoringCSP(list('RBG'), """SA: WA NT Q NSW V; NT: WA Q; NSW: Q V; T: """)
 # result = my_backtracking_search(australia_csp, inference=forward_checking)
-
-# print(conflict_directed_backjumping(usa_csp))
-print(conflict_directed_backjumping(australia_csp))
-
-
-# myset = {}
-# myset[100] = True
-# myset[-100] = True
-# myset[-200] = True
-# myset[100000] = True
-
-
-
-# for x in myset:
-#     print (x)
-# print(str(next(reversed(myset))))
-#
-# myset = collections.OrderedDict()
-# myset[100] = "1"
-# myset[-100] = "2"
-# myset[-200] = "3"
-# myset[100000] = "4"
-# myset[150] = "5"
-# #
-# print("my set before: " + str(myset))
-#
-# myrange = False
-# deleted_set = set()
-# for key, value in myset.items():
-#
-#     if key == 100000:
-#         myrange = True
-#     if myrange:
-#             deleted_set.add(key)
-#     if key == 150:
-#         myrange = False
-#
-#
-# for x in deleted_set:
-#     myset[x]=''
-
-# print("deleted set = " + str(deleted_set))
-# print("my set after: " + str(myset))
-
-
-
-
-# print(myset)
 
 print("Instance: " + instance + " | MRV + MAC Time: " + str(round(time.time() - start_time, 2)) + " sec. | Assigns number: " + str(k.nassigns) + " | Number of constraint checks: " + str(k.constraints_check_no))
 
