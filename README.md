@@ -32,11 +32,11 @@ Notes:
 | FC-CBJ              | 0.38 sec | 6120           | 306,577                     |
 | FC-CBJ + dom/wdeg   | 0.06 sec | 207            | 19,561                      |
 
-### Instance: 3-f25 (UNSAT)
+### Instance: 2-f25 (UNSAT)
 | Algorithm (2-f25)   | Time      | Assigns number | Number of constraint checks |
 |---------------------|-----------|----------------|-----------------------------|
-| BT + FC + dom/wdeg  | 34.12 sec | 49377          | 5,583,778                   |
-| BT + MAC + dom/wdeg | 5.57 sec  | 826            | 1,218,585                   |
+| BT + FC + dom/wdeg  | 50.4 sec  | 50.4 sec       | 24,293,135                  |
+| BT + MAC + dom/wdeg | 98.09 sec | 32938          | 67,111,862                  |
 | CBJ + dom/wdeg      | Timeout   | -              | -                           |
 | FC-CBJ              | 116.5 sec | 1765713        | 104,391,258                 |
 | FC-CBJ + dom/wdeg   | 1.03 sec  | 2963           | 513,591                     |
