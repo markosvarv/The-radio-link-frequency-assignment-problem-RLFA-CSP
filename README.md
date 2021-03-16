@@ -4,10 +4,20 @@
 
 ### sdi1400017@di.uoa.gr
 
+In this project we solve the RLFA CSP (Radio Link Frequency Assignment Problem Constraint Satisfaction Problem) using as algorithms FC, MAC and FC-CBJ with a conflict-directed heuristic for variable ordering.
 
-This project is a RLFA CSP (Radio Link Frequency Assignment Problem CSP) using algorithms FC, MAC and FC-CBJ.
+## Algorithms
 
-## Data structures - dictionaries
+- **Backtracking using Forward Checking (FC) and Maintain Arc Consistency (MAC)**: 
+  These algorithms are implemented and used from the AIMA code. https://github.com/aimacode/aima-python/blob/master/csp.py
+- **The dom/wdeg heuristic**
+  It's a conflict-directed **variable ordering** heuristic: "Ιt avoids some trashing by first instantiating variables involved in the constraints that have frequently participated in dead-end situations. Such information is recorded by associating a weight with each constraint." More info in the following paper: http://www.frontiersinai.com/ecai/ecai2004/ecai04/pdf/p0146.pdf .
+- **Forward Checking Conflict-directed Backjumping (FC-CBJ)**: This algorithm *jumps* to the variable that *caused the conflict* and not simply to the most (chronologically) recent variable. That reduces the time for difficult problems, as we will see below. When combined with Forward Checking especially, we have a very fast algorithm for large datasets. We use the below data structures:
+  - **conflict_set**: it's a dictionary of sets that represents the conflict set of every variable of the problem, i.e. conflict_set[variableA] = {variableC, variableJ, variableL}
+  - **checking**: it's a dictionary of sets that represents the checking set of every variable of the problem, meaning the variables whose values the Forward Checking wiped out from the domains. We use that sets in order to find the conflict set of every variable.
+
+
+## RLFA Data structures: Dictionaries
 
 - the **variables_dict** assigns domain numbers to variables, i.e. variables_dict[variable] = #domain
 - the **domains_dict** assigns lists of variables to domain numbers, i.e. domains_dict[#domain] = [value1, value2, ..., valueN]
@@ -17,6 +27,7 @@ This project is a RLFA CSP (Radio Link Frequency Assignment Problem CSP) using a
 
 ## Design options
 - We assume that for every pair of variables (variableA, variableB) there is only one constraint. Otherwise, only the last constraint remains and a corresponding message informs the user.
+- We have modified the min-conflicts algorithm, so that the variables are in a random order for every execution.
 
 ## Results
 
@@ -57,8 +68,6 @@ The heuristic dom/wdeg was found essential, because, using the default variable 
 | BT + MAC + dom/wdeg | 121.49 sec     | 22929          | 101,292,941                 |
 | FC-CBJ + dom/wdeg   | 86.26 sec      | 309014         | 54,123,606                  |
 
-The BT + FC + dom/wdeg is very slow and it isn't effective in either circumstances.
-
 
 ### Instance: 7-w1-f5 (UNSAT)
 | Algorithm (7-w1-f5) | Time             | Assigns number | Number of constraint checks |
@@ -75,15 +84,16 @@ The BT + FC + dom/wdeg is very slow and it isn't effective in either circumstanc
 | BT + MAC + dom/wdeg | 58.8 sec         | 16759          | 29,534,016                  |
 | FC-CBJ + dom/wdeg   | 25.15 sec        | 44901          | 6,091,607                   |
 
+The BT + FC + dom/wdeg is very slow and it isn't effective in large datasets, or when the problem is UNSAT.
 
 ### Instance: 14-f27 (SAT)
 | Algorithm (14-f27)  | Time             | Assigns number | Number of constraint checks |
 |---------------------|------------------|----------------|-----------------------------|
 | BT + FC + dom/wdeg  | Timeout( >10min) | -              | -                           |
-| BT + MAC + dom/wdeg | Timeout( >10min) | -              | -                           |
+| BT + MAC + dom/wdeg | 1433,74 sec      | 7461123        | 150,811,431                 |
 | FC-CBJ + dom/wdeg   | 12.19 sec        | 14460          | 844,552                     |
 
-In conclusion, using the FC-CBJ we have a result for every given instance of the problem in a logical time period. The backtracking algorithm using the dom/wdeg heuristic (preferably the MAC instead of FC) helps us in more small instances and mostly SAT problems. So, the best algorithm for that problem is the FC-CBJ with the dom/wdeg heuristic for variable ordering.
+The BT + MAC + dom/wdeg seems inadequate in the last large SAT instance.
 
 ### Min conflicts - Instance: 2-f24
 | Max steps | SAT/UNSAT | Time       | Assigns number | Number of constraint checks |
@@ -92,6 +102,13 @@ In conclusion, using the FC-CBJ we have a result for every given instance of the
 | 100000    | UNSAT     | 219.2 sec  | 100200         | 293,264,824                 |
 | 100000    | UNSAT     | 212.3 sec  | 100200         | 285,221,656                 |
 | 200000    | UNSAT     | 414.21 sec | 200200         | 597,276,944                 |
+
+The min conflicts algorithm seems that it hasn't a solution for even the smallest instance! (we have corresponding results and for the other instances). The reason is that the solutions are not densely distributed in the state space and that we don't use a heuristic for variable ordering - we just use a random ordering that may cause a lot of conflicts.
+
+## Conclusion 
+Consequently, using the FC-CBJ we have a result for every given instance of the problem in a logical time period. The backtracking algorithm using the dom/wdeg heuristic (preferably the MAC instead of FC) helps us in small instances and mostly in SAT problems. So, the best algorithm for the RLFA CSP is the FC-CBJ with the dom/wdeg heuristic for variable ordering.
+
+
 
 
 
