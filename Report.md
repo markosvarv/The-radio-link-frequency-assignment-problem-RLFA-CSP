@@ -47,7 +47,7 @@ In this project I solve the RLFA CSP (Radio Link Frequency Assignment Constraint
 |---------------------|----------------|----------------|-----------------------------|
 | BT + FC + dom/wdeg  | 50.4 sec       | 50.4 sec       | 24,293,135                  |
 | BT + MAC + dom/wdeg | 98.09 sec      | 32938          | 67,111,862                  |
-| CBJ + dom/wdeg      | Timeout(>10min)| -              | -                           |
+| CBJ + dom/wdeg      | Timeout(>15min)| -              | -                           |
 | FC-CBJ              | 116.5 sec      | 1765713        | 104,391,258                 |
 | FC-CBJ + dom/wdeg   | 1.03 sec       | 2963           | 513,591                     |
 
@@ -65,7 +65,7 @@ The heuristic dom/wdeg was found essential, because, using the default variable 
 
 | Algorithm (3-f11)   | Time           | Assigns number | Number of constraint checks |
 |---------------------|----------------|----------------|-----------------------------|
-| BT + FC + dom/wdeg  | Timeout(>15min)| -              | -                           |
+| BT + FC + dom/wdeg  | 1080,03 sec    | 5965372        | 851,057,936                 |
 | BT + MAC + dom/wdeg | 121.49 sec     | 22929          | 101,292,941                 |
 | FC-CBJ + dom/wdeg   | 86.26 sec      | 309014         | 54,123,606                  |
 
