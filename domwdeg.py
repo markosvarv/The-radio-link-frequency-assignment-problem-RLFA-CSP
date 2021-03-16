@@ -4,8 +4,6 @@ from csp import *
 def domwdeg_dynamic_variable(assignment, csp):
     """The dom/wdeg heuristic variable order."""
 
-    uninstantiated_vars_number = len(csp.variables) - len(assignment)
-    print("Uninstantiated variables number = " + str(uninstantiated_vars_number))
     if csp.curr_domains is not None:
         my_min = 999999
         return_var = 999999

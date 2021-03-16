@@ -1,6 +1,7 @@
 import time
 from domwdeg import *
 from fc_cbj import *
+from my_min_conflicts import *
 
 
 class RLFA(CSP):
@@ -74,8 +75,7 @@ class RLFA(CSP):
 
         return neighbors_dict
 
-    @staticmethod
-    def get_constraints_dict(constraints_list):
+    def get_constraints_dict(self, constraints_list):
         constraints_dict = {}
         for current_list in constraints_list:
             x = int(current_list[0])
@@ -94,22 +94,20 @@ class RLFA(CSP):
 
         return constraints_dict
 
-    @staticmethod
-    def increase_constraint_weight(A, B):
-        comp, k, weight = constraints_dict[(A, B)]
-        constraints_dict[(A, B)] = (comp, k, weight+1)
-        constraints_dict[(B, A)] = (comp, k, weight+1)
+    def increase_constraint_weight(self, A, B):
+        comp, k, weight = self.constraints_dict[(A, B)]
+        self.constraints_dict[(A, B)] = (comp, k, weight+1)
+        self.constraints_dict[(B, A)] = (comp, k, weight+1)
 
-    @staticmethod
-    def get_constraint_weight(A, B):
-        comp, k, weight = constraints_dict[(A, B)]
+    def get_constraint_weight(self, A, B):
+        comp, k, weight = self.constraints_dict[(A, B)]
         return weight
 
     def get_list(self):
         return self.constraints_list
 
     def constraints(self, A, a, B, b):
-        comp, k, weight = constraints_dict[(A, B)]
+        comp, k, weight = self.constraints_dict[(A, B)]
 
         self.constraints_check_no += 1
 
@@ -131,6 +129,7 @@ class RLFA(CSP):
 
         variables_list = list(variables_dict.keys())
         variables_domain_dict = self.assign_domains_to_variables(variables_dict, domains_dict)
+        self.constraints_dict = self.get_constraints_dict(self.constraints_list)
 
         neighbors_dict = self.get_neighbors_dict(self.constraints_list)
         self.constraints_check_no = 0
@@ -138,37 +137,57 @@ class RLFA(CSP):
         CSP.__init__(self, variables_list, variables_domain_dict, neighbors_dict, self.constraints)
 
 
-instance = "2-f24"
-# instance = "2-f25"
-# instance = "3-f10"
-# instance = "3-f11"
-# instance = "11"
+instance_list = ["2-f24", "2-f25", "3-f10", "3-f11", "6-w2", "7-w1-f4", "7-w1-f5", "11", "8-f10", "8-f11", "14-f27", "14-f28"]
 
-k = RLFA(instance)
-constraints_dict = k.get_constraints_dict(k.constraints_list)
-start_time = time.time()
 
-"""BACKTRACKING"""
-# result = backtracking_search(k)
-# result = backtracking_search(k, inference=forward_checking)
-# result = backtracking_search(k, select_unassigned_variable=domwdeg_dynamic_variable, inference=domwdeg_forward_checking)
-# result = backtracking_search(k, inference=mac)
-# result = backtracking_search(k, select_unassigned_variable=domwdeg_dynamic_variable, inference=domwdeg_mac)
+for instance in instance_list:
+    """BACKTRACKING"""
+    rlfa_csp = RLFA(instance)
+    start_time = time.time()
+    result_bt_fc = backtracking_search(rlfa_csp, select_unassigned_variable=domwdeg_dynamic_variable, inference=domwdeg_forward_checking)
+    print(result_bt_fc)
+    print("\nInstance: " + instance + " | BT + FC + dom/wdeg Time: " + str(round(time.time() - start_time, 2)) + " sec. | Assigns number: " + str(rlfa_csp.nassigns) + " | Number of constraint checks: " + "{:,}".format(rlfa_csp.constraints_check_no))
+    print("\n---------------------------------------------------------------------------\n\n")
+    rlfa_csp = None
+    
+    rlfa_csp = RLFA(instance)
+    start_time = time.time()
+    result_bt_mac = backtracking_search(rlfa_csp, select_unassigned_variable=domwdeg_dynamic_variable, inference=domwdeg_mac)
+    print(result_bt_mac)
+    print("\nInstance: " + instance + " | BT + MAC + dom/wdeg Time: " + str(round(time.time() - start_time, 2)) + " sec. | Assigns number: " + str(rlfa_csp.nassigns) + " | Number of constraint checks: " + "{:,}".format(rlfa_csp.constraints_check_no))
+    print("\n---------------------------------------------------------------------------\n\n")
+    rlfa_csp = None
 
-"""CONFLICT DIRECTED BACKJUMPING"""
-# result = conflict_directed_backjumping(k)
-# result = conflict_directed_backjumping(k, select_unassigned_variable=domwdeg_dynamic_variable)
-# result = conflict_directed_backjumping(k, inference=forward_checking_cbj)
-result = conflict_directed_backjumping(k, select_unassigned_variable=domwdeg_dynamic_variable, inference=cbj_forward_checking)
+    # result = backtracking_search(rlfa_csp)
+    # result = backtracking_search(rlfa_csp, inference=mac)
+    # result = backtracking_search(rlfa_csp, select_unassigned_variable=domwdeg_dynamic_variable)
+
+    """CONFLICT DIRECTED BACKJUMPING"""
+
+    rlfa_csp = RLFA(instance)
+    start_time = time.time()
+    result_fc_cbj = conflict_directed_backjumping(rlfa_csp, select_unassigned_variable=domwdeg_dynamic_variable, inference=cbj_forward_checking)
+    print(result_fc_cbj)
+    print("\nInstance: " + instance + " | FC-CBJ + dom/wdeg Time: " + str(round(time.time() - start_time, 2)) + " sec. | Assigns number: " + str(rlfa_csp.nassigns) + " | Number of constraint checks: " + "{:,}".format(rlfa_csp.constraints_check_no))
+    print("\n---------------------------------------------------------------------------\n\n")
+    rlfa_csp = None
+    # result = conflict_directed_backjumping(rlfa_csp)
+    # result = conflict_directed_backjumping(rlfa_csp, select_unassigned_variable=domwdeg_dynamic_variable)
+    # result = conflict_directed_backjumping(rlfa_csp, inference=cbj_forward_checking)
+
 
 """MIN CONFLICTS"""
-# result = min_conflicts(k, 500000)
+# for instance in instance_list:
+#     # result = min_conflicts(k, 500000)
+#     rlfa_csp = RLFA(instance)
+#     start_time = time.time()
+#     result = my_min_conflicts(rlfa_csp, 10000)
+#
+#     print(result)
+#     print("Instance: " + instance + " | Time: " + str(round(time.time() - start_time, 2)) + " sec. | Assigns number: " + str(rlfa_csp.nassigns) + " | Number of constraint checks: " + "{:,}".format(rlfa_csp.constraints_check_no))
+#     rlfa_csp = None
+
 
 """OTHER PROBLEMS"""
 # result = conflict_directed_backjumping(australia_csp, inference=forward_checking_cbj)
 # result = conflict_directed_backjumping(usa_csp)
-
-print(result)
-print("Instance: " + instance + " | Time: " + str(round(time.time() - start_time, 2)) + " sec. | Assigns number: " + str(k.nassigns) + " | Number of constraint checks: " + "{:,}".format(k.constraints_check_no))
-
-

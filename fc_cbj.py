@@ -9,8 +9,8 @@ def no_cbj_inference(csp, var, value, assignment, removals, var_checking):
 def conflict_directed_backjumping(csp, select_unassigned_variable=first_unassigned_variable,
                                   order_domain_values=unordered_domain_values, inference=no_cbj_inference):
     conflict_set = {}
-    assignment = collections.OrderedDict()  # we use an OrderedDict to ensure that we keep the order of the assigned variables
-    checking = {}  # we use a checking dictionary of variable sets in order to find the conflict sets
+    assignment = collections.OrderedDict()  # I use an OrderedDict to ensure that I keep the order of the assigned variables
+    checking = {}  # I use a checking dictionary of variable sets in order to find the conflict sets
 
     def CBJ():
         if len(assignment) == len(csp.variables):
