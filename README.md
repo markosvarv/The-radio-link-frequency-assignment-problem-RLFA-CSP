@@ -4,7 +4,7 @@
 
 ### sdi1400017@di.uoa.gr
 
-In this project I solve the RLFA CSP (Radio Link Frequency Assignment Constraint Satisfaction Problem) using as algorithms FC, MAC and FC-CBJ with a conflict-directed heuristic for variable ordering.
+In this project I solve the RLFA CSP (Radio Link Frequency Assignment Constraint Satisfaction Problem) using the algorithms FC, MAC and FC-CBJ with a conflict-directed heuristic for variable ordering.
 
 ## Algorithms
 
@@ -23,7 +23,7 @@ In this project I solve the RLFA CSP (Radio Link Frequency Assignment Constraint
 - the **domains_dict** assigns lists of variables to domain numbers, i.e. domains_dict[#domain] = [value1, value2, ..., valueN]
 - the **variables_domain_dict** merges the previous two dictionaries and assigns a list of the exact domain values to variables, i.e. variables_domain_dict[variable] = [value1, value2, ..., valueN]
 - the **neighbors_dict** assigns the neighbor variable of each variable in the constraints, i.e. neighbors_dict[variableA] = variableB
-- the **constraints_dict** assighs the compare operator and the k constant to a tuple of variables, i.e. constraints_dict[(variableA, variableB)] = (\<operator>, k) where \<operator> is either '>' or '='
+- the **constraints_dict** assigns the compare operator and the k constant to a tuple of variables, i.e. constraints_dict[(variableA, variableB)] = (\<operator>, k) where \<operator> is either '>' or '='
 
 ## Design options
 - I assume that for every pair of variables (variableA, variableB) there is only one constraint. Otherwise, only the last constraint remains and a corresponding message informs the user.
@@ -51,7 +51,7 @@ In this project I solve the RLFA CSP (Radio Link Frequency Assignment Constraint
 | FC-CBJ              | 116.5 sec      | 1765713        | 104,391,258                 |
 | FC-CBJ + dom/wdeg   | 1.03 sec       | 2963           | 513,591                     |
 
-The heuristic dom/wdeg was found essential, because, using the default variable ordering, the time was incredibly high (in the most instances, the algorithm didn't even stop).
+The heuristic dom/wdeg was found essential, because, using the default variable ordering, the time was incredibly high (in most instances, the algorithm didn't even stop).
 
 
 ### Instance: 3-f10 (SAT)
