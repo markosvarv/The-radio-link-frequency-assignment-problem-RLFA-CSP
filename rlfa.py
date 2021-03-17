@@ -141,6 +141,7 @@ instance_list = ["2-f24", "2-f25", "3-f10", "3-f11", "6-w2", "7-w1-f4", "7-w1-f5
 
 
 for instance in instance_list:
+
     """BACKTRACKING"""
     rlfa_csp = RLFA(instance)
     start_time = time.time()
@@ -163,7 +164,6 @@ for instance in instance_list:
     # result = backtracking_search(rlfa_csp, select_unassigned_variable=domwdeg_dynamic_variable)
 
     """CONFLICT DIRECTED BACKJUMPING"""
-
     rlfa_csp = RLFA(instance)
     start_time = time.time()
     result_fc_cbj = conflict_directed_backjumping(rlfa_csp, select_unassigned_variable=domwdeg_dynamic_variable, inference=cbj_forward_checking)
