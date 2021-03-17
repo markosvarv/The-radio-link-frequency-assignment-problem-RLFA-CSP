@@ -17,7 +17,14 @@ In this project I solve the RLFA CSP (Radio Link Frequency Assignment Constraint
   - **checking**: it's a dictionary of sets that represents the checking set of every variable of the problem, meaning the variables whose values the Forward Checking wiped out from the domains. I use that sets in order to find the conflict set of every variable.
 
 
-## RLFA Data structures: Dictionaries
+## RLFA
+
+### Execution:
+```
+python rlfa.py
+```
+
+### Data structures: Dictionaries
 
 - the **variables_dict** assigns domain numbers to variables, i.e. variables_dict[variable] = #domain
 - the **domains_dict** assigns lists of variables to domain numbers, i.e. domains_dict[#domain] = [value1, value2, ..., valueN]
@@ -25,7 +32,7 @@ In this project I solve the RLFA CSP (Radio Link Frequency Assignment Constraint
 - the **neighbors_dict** assigns the neighbor variable of each variable in the constraints, i.e. neighbors_dict[variableA] = variableB
 - the **constraints_dict** assigns the compare operator and the k constant to a tuple of variables, i.e. constraints_dict[(variableA, variableB)] = (\<operator>, k) where \<operator> is either '>' or '='
 
-## Design options
+### Design options
 - I assume that for every pair of variables (variableA, variableB) there is only one constraint. Otherwise, only the last constraint remains and a corresponding message informs the user.
 - I have modified some AIMA algorithms in order to use them with dom/wdeg or cbj. These functions' names have a prefix of the corresponding algorithm.
 - I have modified the min-conflicts algorithm, so that the variables are in a random order for every execution.
