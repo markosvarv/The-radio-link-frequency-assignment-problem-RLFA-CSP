@@ -19,7 +19,7 @@ In this project I solve the RLFA CSP (Radio Link Frequency Assignment Constraint
 
 ## RLFA
 
-### Execution:
+### Execution
 ```
 python rlfa.py
 ```
