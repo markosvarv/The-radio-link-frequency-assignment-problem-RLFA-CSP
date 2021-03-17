@@ -8,7 +8,7 @@ In this project I solve the RLFA CSP (Radio Link Frequency Assignment Constraint
 
 ## Algorithms
 
-- **Backtracking using Forward Checking (FC) and Maintain Arc Consistency (MAC)**: 
+- **Backtracking using Forward Checking (FC) and Maintaining Arc Consistency (MAC)**: 
   These algorithms are implemented and used from the AIMA code. https://github.com/aimacode/aima-python/blob/master/csp.py
 - **The dom/wdeg heuristic**
   It's a conflict-directed **variable ordering** heuristic: "Ιt avoids some trashing by first instantiating variables involved in the constraints that have frequently participated in dead-end situations. Such information is recorded by associating a weight with each constraint." More info in the following paper: http://www.frontiersinai.com/ecai/ecai2004/ecai04/pdf/p0146.pdf .
